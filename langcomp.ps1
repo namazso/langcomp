@@ -15,7 +15,7 @@ $tail = "#endif
 ";
 $body = "";
 
-Get-ChildItem $args[0] | % {
+Get-ChildItem -Path $args[0] -Filter *.json | % {
     $json = Get-Content -Raw -Encoding UTF8 $_.FullName | ConvertFrom-Json;
     $body += "LANGUAGE " + $json.langid + ", " + $json.sublangid + "`nSTRINGTABLE`nBEGIN`n";
     $json.strings | Get-Member -MemberType NoteProperty | % {
