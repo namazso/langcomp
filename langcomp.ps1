@@ -15,12 +15,17 @@ $tail = "#endif
 ";
 $body = "";
 
+$default_json = Get-Content -Raw -Encoding UTF8 -Path $args[1] | ConvertFrom-Json;
+
 Get-ChildItem -Path $args[0] -Filter *.json | % {
     $json = Get-Content -Raw -Encoding UTF8 $_.FullName | ConvertFrom-Json;
     $body += "LANGUAGE " + $json.langid + ", " + $json.sublangid + "`nSTRINGTABLE`nBEGIN`n";
-    $json.strings | Get-Member -MemberType NoteProperty | % {
+    $default_json.strings | Get-Member -MemberType NoteProperty | % {
         $value_escaped = "";
         $value = $json.strings."$($_.Name)";
+		If ($value -eq $null -or $value -eq "") {
+			$value = $default_json.strings."$($_.Name)";
+		}
 
 # I wish resource compiler supported escape sequences properly
 #        $value_bytes = [System.Text.Encoding]::UTF32.GetBytes($value);
@@ -43,4 +48,4 @@ Get-ChildItem -Path $args[0] -Filter *.json | % {
     $body += "END`n";
 };
 
-$head + $body + $tail | Set-Content -Encoding Unicode -Path $args[1];
+$head + $body + $tail | Set-Content -Encoding Unicode -Path $args[2];
