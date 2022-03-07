@@ -37,7 +37,7 @@ Get-ChildItem -Path $args[0] -Filter *.json | % {
         # until 0xFF we can just \x escape everything, instead of proper C++ escaping.
         # over 0xFF we can pass through everything, nothing needs escape there.
         $value.ToCharArray() | % {
-            If([long]$_ -lt 256) {
+            If([long]$_ -lt 128) {
                 $value_escaped += "\x{0:X2}" -f [long]$_;
             } Else {
                 $value_escaped += $_;
